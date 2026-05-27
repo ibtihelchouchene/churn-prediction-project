@@ -1,10 +1,10 @@
-# 📡 Telecom Churn Prediction
+#  Telecom Churn Prediction
 
 > Machine Learning pipeline to predict customer churn on 100,000 telecom customers — with hyperparameter tuning, SHAP explainability, and an interactive Dash dashboard.
 
 ---
 
-## 🏆 Results at a Glance
+##  Results at a Glance
 
 | Metric | Value |
 |---|---|
@@ -20,7 +20,7 @@
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 churn prediction/
@@ -59,11 +59,11 @@ pip install shap statsmodels scipy seaborn matplotlib pyarrow
 pip install dash dash-bootstrap-components plotly
 ```
 
-> ⚠️ **Use Python 3.11.** Python 3.14 has a known `scipy` import crash that prevents `sklearn` and all ML libraries from loading.
+>  **Use Python 3.11.** Python 3.14 has a known `scipy` import crash that prevents `sklearn` and all ML libraries from loading.
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ```bash
 # 1. Run the full pipeline (all 5 steps)
@@ -74,6 +74,7 @@ python run_pipeline.py --from 4
 
 # 3. Run steps individually
 python 01_eda.py
+python preprocessing_pipeline.py
 python 02_preprocessing.py
 python 03_baseline_cv.py
 python 04_tuning.py
@@ -86,19 +87,19 @@ python dashboard_v2.py
 
 ---
 
-## 🔬 Pipeline Steps
+##  Pipeline Steps
 
 | Step | Script | What it does | Output |
 |---|---|---|---|
 | 1 | `01_eda.py` | Load CSV, clean nulls, EDA plots (heatmap, boxplots, histograms, correlations), t-tests, chi2 tests, drop low-signal columns | `data/df_clean.parquet` |
-| 2 | `02_preprocessing.py` | Train/test split, median imputation, 22 engineered features, target encoding, OrdinalEncoder from preprocessing_pipeline.py | `X/y train & test parquets` |
+| 2 |` preprocessing_ pipeline.py`/`02_preprocessing.py` | Train/test split, median imputation, +20 engineered features, target encoding, OrdinalEncoder from preprocessing_pipeline.py | `X/y train & test parquets` |
 | 3 | `03_baseline_cv.py` | 3-fold stratified CV across 6 models with F1-optimal thresholding | `data/cv_results.json` |
 | 4 | `04_tuning.py` | RandomizedSearchCV (30 iters, 5-fold) for XGBoost & LightGBM | `best_lgb.pkl` / `best_xgb.pkl` |
 | 5 | `05_evaluation.py` | Test metrics, confusion matrices, ROC/PR/calibration dashboard, SHAP global + local, business summary | `outputs/eval/*.png` |
 
 ---
 
-## 🗄️ Dataset
+##  Dataset
 
 | Property | Value |
 |---|---|
@@ -109,19 +110,20 @@ python dashboard_v2.py
 | Churn rate | ~49.6% (near-balanced) |
 | Train / Test | 80,000 / 20,000 (stratified) |
 
-### Preprocessing Steps (`02_preprocessing.py`)
+### Preprocessing Steps (`preprocessing.py`/`02_preprocessing.py`)
 
-- Dropped 37 low-signal, leakage, or ID columns
-- Median imputation for numerics, mode for categoricals
-- **22 engineered features**: call completion rate, drop rate, revenue per minute, overage ratio, MOU momentum, customer LTV, revenue stability, active sub ratio, and more
-- Percentile clipping at 1st–99th for ratio features (train bounds applied to test)
-- Binary mapping for `asl_flag`, `creditcd`, `dualband`, `ownrent`, `refurb_new`
-- Cross-fold target encoding (k=20, 5-fold) for 7 high-cardinality categoricals — no data leakage
-- `OrdinalEncoder` for remaining object columns
-
+- Modular sklearn preprocessing pipeline with leak-free transformations  
+- Median imputation for numerics, mode imputation for categoricals  
+- 20+ engineered features: call completion rate, drop rate, revenue per minute, overage ratio, customer LTV, MOU/revenue momentum, revenue stability, active sub ratio, device health metrics, and risk flags  
+- Percentile clipping at 1st–99th for ratio and momentum features (train-set bounds applied to test)  
+- Binary mapping for `asl_flag`, `creditcd`, `dualband`, `ownrent`  
+- Cross-fold target encoding (`k=20`, 5-fold OOF) for 7 high-cardinality categoricals — no target leakage  
+- `OrdinalEncoder` for remaining categorical columns with unseen-category handling  
+- Optional VIF-based multicollinearity removal for linear models  (skipped for tree models)
+- Pipeline saved as `preprocessor.pkl` for reproducible inference and deployment  
 ---
 
-## 🤖 Models
+##  Models
 
 ### Baseline Cross-Validation (`03_baseline_cv.py`)
 
@@ -163,12 +165,12 @@ RandomizedSearchCV with 30 iterations and 5-fold CV, optimising ROC-AUC.
 
 | | Predicted No Churn | Predicted Churn |
 |---|---|---|
-| **Actual No Churn** | TN = 4,618 ✅ | FP = 5,470 ⚠️ wasted spend |
-| **Actual Churn** | FN = 2,006 ❌ revenue at risk | TP = 7,906 ✅ |
+| **Actual No Churn** | TN = 4,618  | FP = 5,470 : wasted spend |
+| **Actual Churn** | FN = 2,006 : revenue at risk | TP = 7,906  |
 
 ---
 
-## 🔍 SHAP Explainability
+##  SHAP Explainability
 
 SHAP values are computed with `TreeExplainer` on the best XGBoost model.
 
@@ -190,7 +192,7 @@ SHAP values are computed with `TreeExplainer` on the best XGBoost model.
 
 ---
 
-## 📊 Dashboard (`dashboard_v2.py`)
+##  Dashboard (`dashboard_v2.py`)
 
 Single-file Dash app. Reads all pipeline outputs — **no retraining on launch**.
 
@@ -223,7 +225,7 @@ python dashboard_v2.py
 
 ---
 
-## ⚡ Speed Optimisations
+##  Speed Optimisations
 
 | Technique | Benefit |
 |---|---|
@@ -237,7 +239,7 @@ python dashboard_v2.py
 
 ---
 
-## 📦 All Output Files
+##  All Output Files
 
 | File | Description |
 |---|---|
