@@ -1,0 +1,1 @@
+[{"Model":"LightGBM","CV ROC-AUC (tuned)":0.6953779024},{"Model":"XGBoost","CV ROC-AUC (tuned)":0.6952690706}]
